@@ -2,20 +2,22 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from langchain_core.prompts import PromptTemplate
 import streamlit as st
-
-# chatModel = ChatOpenAI(model="gpt-4o-mini", temperature=0.5)
+import copy
 
 st.set_page_config(page_title="ChatBot basico", page_icon="🤖")
 st.title("Chat Faster")
 st.markdown("Bienvenido al chatBot basico usando Langchain y Streamlit")
 
-temperature = ""
+temperature = "",
 model_name = ""
+
 
 with st.sidebar:
     st.title("Configuración")
     temperature = st.slider("Temperatura", 0.0, 1.0, 0.5, 0.1)
     model_name = st.selectbox("Modelo", ["gpt-3.5-turbo", "gpt-4", "gpt-4o-mini"])
+    if st.button("🗑️ Nueva conversación"):
+        st.session_state.messages = []
     chatModel = ChatOpenAI(model=model_name, temperature=temperature)
 
 template = PromptTemplate(
@@ -32,6 +34,9 @@ chain = template | chatModel
 # initial message history
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+if "historySidebar" not in st.session_state:
+    st.session_state.historySidebar = []
 
 # show previous messages
 for msg in st.session_state.messages:
@@ -56,9 +61,11 @@ if question:
       "mensaje": question,
       "historial": st.session_state.messages
     })
+    
 
     #show response in the interface
     with st.chat_message("assistant"):
         st.markdown(response.content)
 
     st.session_state.messages.append(AIMessage(content=response.content))
+
