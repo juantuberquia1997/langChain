@@ -35,9 +35,6 @@ chain = template | chatModel
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-if "historySidebar" not in st.session_state:
-    st.session_state.historySidebar = []
-
 # show previous messages
 for msg in st.session_state.messages:
     if isinstance(msg, SystemMessage):
