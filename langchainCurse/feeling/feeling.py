@@ -1,7 +1,6 @@
 from langchain_core.runnables import RunnableLambda, RunnableParallel
 from langchain_openai import ChatOpenAI
 import json
-from langchain_core.prompts import PromptTemplate
 import streamlit as st
  
  # Configuración del modelo
@@ -44,7 +43,14 @@ def analizeFeeling(text):
        return json.loads(response.content)
     except json.JSONDecodeError:
         return {"sentimiento": "neutro", "razon": "Error en análisis"}
-   
+
+def merge_results(summaryData, feelingData):
+    return {
+        "resumen": summaryData,
+        "sentimiento": feelingData["sentimiento"],
+        "razon": feelingData["razon"]
+    }
+     
 if question:
   preprocessor = RunnableLambda(cleanInputText)
   summary = RunnableLambda(createSummary)
@@ -56,5 +62,4 @@ if question:
   result= analize.invoke(question)
   st.markdown(result)
 
-    
-   
+  merge_results(resultado, result)
