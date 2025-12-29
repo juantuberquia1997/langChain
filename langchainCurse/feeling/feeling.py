@@ -12,6 +12,7 @@ def cleanInputText(text):
   textValidate= len(text.strip())
   if textValidate > 500:
     st.markdown("Texto demasiado largo, limite de 500 caracteres")
+    raise ValueError("Texto demasiado largo, limite de 500 caracteres")
   else:
     return text.strip()
   
@@ -44,22 +45,24 @@ def analizeFeeling(text):
     except json.JSONDecodeError:
         return {"sentimiento": "neutro", "razon": "Error en análisis"}
 
-def merge_results(summaryData, feelingData):
+def merge_results(data):
     return {
-        "resumen": summaryData,
-        "sentimiento": feelingData["sentimiento"],
-        "razon": feelingData["razon"]
+        "resumen": data["resumen"],
+        "sentimiento": data["sentimiento"]["sentimiento"] ,
+        "razon": data["sentimiento"]["razon"]
     }
      
 if question:
   preprocessor = RunnableLambda(cleanInputText)
   summary = RunnableLambda(createSummary)
-  chain = preprocessor | summary 
+  analize = RunnableLambda(analizeFeeling)
+  mergeData = RunnableLambda(merge_results)
+
+  chain = preprocessor |  RunnableParallel({
+      "resumen": summary,
+      "sentimiento": analize
+  }) | mergeData
+
   resultado = chain.invoke(question)  
   st.markdown(resultado)
 
-  analize = RunnableLambda(analizeFeeling)
-  result= analize.invoke(question)
-  st.markdown(result)
-
-  merge_results(resultado, result)
