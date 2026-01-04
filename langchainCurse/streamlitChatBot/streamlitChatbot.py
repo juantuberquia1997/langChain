@@ -1,13 +1,15 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import streamlit as st
 
 st.set_page_config(page_title="ChatBot basico", page_icon="🤖")
 st.title("Chat Faster")
 st.markdown("Bienvenido al chatBot basico usando Langchain y Streamlit")
 
-temperature = "", model_name = "", personalizationSystem = "",
+temperature = ""
+model_name = ""
+personalizationSystem = ""
 
 with st.sidebar:
     st.title("Configuración")
@@ -19,7 +21,8 @@ with st.sidebar:
     chatModel = ChatOpenAI(model=model_name, temperature=temperature)
 
 chat_prompt = ChatPromptTemplate.from_messages([
-  ("system", "Eres un asistente {personalizationSystem} llamado ChatBot fast, responde de manera clara y concisa. El historial de conversacion es: {historial}"),
+  ("system", "Eres un asistente {personalizationSystem} llamado ChatBot fast, responde de manera clara y concisa"),
+  MessagesPlaceholder(variable_name="historial"),
   ("human", "{mensaje}"),
 ])
 
@@ -48,6 +51,8 @@ if question:
     st.session_state.messages.append(HumanMessage(content=question))
 
     result= chain.invoke({"mensaje": question, "historial": st.session_state.messages, "personalizationSystem": personalizationSystem})
+
+    print("hsiur", st.session_state.messages)
 
     #show response in the interface
     with st.chat_message("assistant"):
