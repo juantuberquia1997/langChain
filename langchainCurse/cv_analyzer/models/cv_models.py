@@ -7,4 +7,4 @@ class CV_analyzer(BaseModel):
   education: str = Field(description="Nivel educativo mas alto del candidato")
   experience_relevant: str = Field(description="Resumen corto de la experiencia mas relevante")
   weaknesses: list[str]= Field(description="Listado de oportunidades de mejora del candidado, 3-4 mejoras")
-  percentaje: int = Field(description="Porcentaje de ajuste del puesto (0-100) en la vacante")
+  percentaje: int = Field(description="Porcentaje de ajuste del puesto (0-100) en la vacante", ge=0, le=100)

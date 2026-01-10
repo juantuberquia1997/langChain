@@ -1,10 +1,9 @@
 import pypdf
 
 def readPdf(filePdf):
-  print("Leyendo pdf...", filePdf)
   try:
     pdf = pypdf.PdfReader(filePdf)
-    completText
+    completText = ""
 
     for page in pdf.pages:
       textPage = page.extract_text()
@@ -19,4 +18,4 @@ def readPdf(filePdf):
     return completText
     
   except Exception as e:
-    return "Error: No se pudo leer el pdf: {e}"
+    return f"Error: No se pudo leer el pdf: {str(e)}"

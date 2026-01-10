@@ -1,7 +1,7 @@
 import streamlit as st
 from service.pdf_processor import readPdf
 from models.cv_models import CV_analyzer
-# from service.cv_evaluator import evaluar_candidato
+from service.cv_evaluator import evaluar_candidato
 
 def main():
     """Función principal que define la interfaz de usuario de Streamlit"""
@@ -154,7 +154,7 @@ def procesar_analisis(archivo_cv, descripcion_puesto):
         status_text.text("📊 Analizando candidato...")
         progress_bar.progress(75)
         
-        # resultado = evaluar_candidato(texto_cv, descripcion_puesto)
+        resultado = evaluar_candidato(texto_cv, descripcion_puesto)
         
         status_text.text("✅ Análisis completado")
         progress_bar.progress(100)
@@ -162,22 +162,22 @@ def procesar_analisis(archivo_cv, descripcion_puesto):
         progress_bar.empty()
         status_text.empty()
         
-        # mostrar_resultados(resultado)
+        mostrar_resultados(resultado)
 
 def mostrar_resultados(resultado: CV_analyzer):
     """Muestra los resultados del análisis de manera estructurada y profesional"""
     
     st.subheader("🎯 Evaluación Principal")
     
-    if resultado.porcentaje_ajuste >= 80:
+    if resultado.percentaje >= 80:
         color = "🟢"
         nivel = "EXCELENTE"
         mensaje = "Candidato altamente recomendado"
-    elif resultado.porcentaje_ajuste >= 60:
+    elif resultado.percentaje >= 60:
         color = "🟡"
         nivel = "BUENO"
         mensaje = "Candidato recomendado con reservas"
-    elif resultado.porcentaje_ajuste >= 40:
+    elif resultado.percentaje >= 40:
         color = "🟠"
         nivel = "REGULAR"
         mensaje = "Candidato requiere evaluación adicional"
@@ -190,7 +190,7 @@ def mostrar_resultados(resultado: CV_analyzer):
     with col2:
         st.metric(
             label="Porcentaje de Ajuste al Puesto",
-            value=f"{resultado.porcentaje_ajuste}%",
+            value=f"{resultado.percentaje}%",
             delta=f"{color} {nivel}"
         )
         st.markdown(f"**{mensaje}**")
@@ -201,25 +201,25 @@ def mostrar_resultados(resultado: CV_analyzer):
     
     col1, col2 = st.columns(2)
     with col1:
-        st.info(f"**👨‍💼 Nombre:** {resultado.nombre_candidato}")
-        st.info(f"**⏱️ Experiencia:** {resultado.experiencia_años} años")
+        st.info(f"**👨‍💼 Nombre:** {resultado.name}")
+        st.info(f"**⏱️ Experiencia:** {resultado.time_experience} años")
     
     with col2:
         st.info(f"**🎓 Educación:** {resultado.education}")
     
     st.subheader("💼 Experiencia Relevante")
-    st.info(f"📋 **Resumen de experiencia:**\n\n{resultado.experiencia_relevante}")
+    st.info(f"📋 **Resumen de experiencia:**\n\n{resultado.experience_relevant}")
     
     st.divider()
     
     st.subheader("🛠️ Habilidades Técnicas Clave")
-    if resultado.habilidades_clave:
-        cols = st.columns(min(len(resultado.habilidades_clave), 4))
-        for i, habilidad in enumerate(resultado.habilidades_clave):
-            with cols[i % 4]:
-                st.success(f"✅ {habilidad}")
-    else:
-        st.warning("No se identificaron habilidades técnicas específicas")
+    # if resultado.habilidades_clave:
+    #     cols = st.columns(min(len(resultado.habilidades_clave), 4))
+    #     for i, habilidad in enumerate(resultado.habilidades_clave):
+    #         with cols[i % 4]:
+    #             st.success(f"✅ {habilidad}")
+    # else:
+    #     st.warning("No se identificaron habilidades técnicas específicas")
     
     st.divider()
     
@@ -227,16 +227,16 @@ def mostrar_resultados(resultado: CV_analyzer):
     
     with col_fortalezas:
         st.subheader("💪 Fortalezas Principales")
-        if resultado.fortalezas:
-            for i, fortaleza in enumerate(resultado.fortalezas, 1):
+        if resultado.strengths:
+            for i, fortaleza in enumerate(resultado.strengths, 1):
                 st.markdown(f"**{i}.** {fortaleza}")
         else:
             st.info("No se identificaron fortalezas específicas")
     
     with col_mejoras:
         st.subheader("📈 Áreas de Desarrollo")
-        if resultado.areas_mejora:
-            for i, area in enumerate(resultado.areas_mejora, 1):
+        if resultado.weaknesses:
+            for i, area in enumerate(resultado.weaknesses, 1):
                 st.markdown(f"**{i}.** {area}")
         else:
             st.info("No se identificaron áreas de mejora específicas")
@@ -245,14 +245,14 @@ def mostrar_resultados(resultado: CV_analyzer):
     
     st.subheader("📋 Recomendación Final")
     
-    if resultado.porcentaje_ajuste >= 70:
+    if resultado.percentaje >= 70:
         st.success("""
         ✅ **CANDIDATO RECOMENDADO**
         
         El perfil del candidato está bien alineado con los requisitos del puesto. 
         Se recomienda proceder con las siguientes etapas del proceso de selección.
         """)
-    elif resultado.porcentaje_ajuste >= 50:
+    elif resultado.percentaje >= 50:
         st.warning("""
         ⚠️ **CANDIDATO CON POTENCIAL**
         
