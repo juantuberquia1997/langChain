@@ -72,7 +72,7 @@ def mostrar_resultados(resultado: CV_analyzer):
     
     with col_mejoras:
         st.subheader("📈 Áreas de Desarrollo")
-        if resultado.areas_mejora:
+        if resultado.toImprove:
             for i, area in enumerate(resultado.weaknesses, 1):
                 st.markdown(f"**{i}.** {area}")
         else:

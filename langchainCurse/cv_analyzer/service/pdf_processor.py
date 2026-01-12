@@ -8,7 +8,6 @@ def readPdf(filePdf):
     for page in pdf.pages:
       textPage = page.extract_text()
       if textPage.strip():
-        print("este es el texto de la pagina:", textPage)
         completText += textPage
     completText = completText.strip()
 
