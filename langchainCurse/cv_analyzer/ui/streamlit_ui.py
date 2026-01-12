@@ -1,7 +1,4 @@
 import streamlit as st
-from service.pdf_processor import readPdf
-from service.cv_evaluator import evaluar_candidato
-from ui.components.showResults import mostrar_resultados
 from ui.components.startAnalisys import procesar_analisis
 
 def main():
