@@ -1,13 +1,12 @@
 # una base de datos vectorial almacema el resultado del embedding
 # example de una base de datos vectorial opensource son: croma, pinecone 
 
-from langchain_community.document_loaders import PyPDFLoader, PyPDFDirectoryLoader
+from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 import os
 
-# load = PyPDFLoader("C:\\Users\\1234\\Documents\\github\\curseIA\\langchainCurse\\tema3\\pdf\\atl_nacional.pdf")
 load = PyPDFDirectoryLoader("C:\\Users\\1234\\Documents\\github\\curseIA\\langchainCurse\\tema3\\pdf")
 docs= load.load()
 
@@ -16,14 +15,13 @@ chunks = text_splitter.split_documents(docs)
 embeddings= OpenAIEmbeddings(model="text-embedding-3-large")
 
 vector_store = Chroma.from_documents(
-  chunks, 
+  chunks,
   embeddings, 
   persist_directory="C:\\Users\\1234\\Documents\\github\\curseIA\\langchainCurse\\tema3\\chromadb" 
 )
 
-question = "cuales son los generos musicales ?"
+question = "cual es es el equipo de fulbol mas popular de colombia?" 
+result = vector_store.similarity_search(question, k=2)
 
-result = vector_store.similarity_search(question, k=3)
-
-for doc in result:
+for i, doc in enumerate(result):
     print(f"similarity_score: {doc.page_content}")
