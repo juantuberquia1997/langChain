@@ -8,7 +8,7 @@ vector_store = Chroma(
 )
 
 retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 2})
-question = "¿dime generos musicales?" 
+question = "¿dime el nombre de las personas que van a tomar el inmueble?" 
 result = retriever.invoke(question)
 
 print("result__", result)

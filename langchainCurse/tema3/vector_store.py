@@ -10,7 +10,7 @@ import os
 load = PyPDFDirectoryLoader("C:\\Users\\1234\\Documents\\github\\curseIA\\langchainCurse\\tema3\\pdf")
 docs= load.load()
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=50)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=1000)
 chunks = text_splitter.split_documents(docs)
 embeddings= OpenAIEmbeddings(model="text-embedding-3-large")
 
@@ -20,7 +20,7 @@ vector_store = Chroma.from_documents(
   persist_directory="C:\\Users\\1234\\Documents\\github\\curseIA\\langchainCurse\\tema3\\chromadb" 
 )
 
-question = "cual es es el equipo de fulbol mas popular de colombia?" 
+question = "¿dime el nombre de las personas que van a tomar el inmueble?" 
 result = vector_store.similarity_search(question, k=2)
 
 for i, doc in enumerate(result):

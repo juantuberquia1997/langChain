@@ -16,7 +16,7 @@ vector_store = Chroma(
 base_retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 2})
 retriever = MultiQueryRetriever.from_llm(llm=llm, retriever=base_retriever)
 
-question = "¿cual es la copa mas importante que ha ganado Atletico nacional?" 
+question = "¿dime el nombre de las personas que van a tomar el inmueble?" 
 result = retriever.invoke(question)
 
 print("result__", result)
