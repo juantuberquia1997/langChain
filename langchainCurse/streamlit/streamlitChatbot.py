@@ -1,3 +1,4 @@
+# chat bot basico usando langchain y streamlit
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from langchain_core.prompts import PromptTemplate
