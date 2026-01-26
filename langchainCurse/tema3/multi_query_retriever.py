@@ -1,4 +1,6 @@
 # uso de multi query retriever para  hacer una consulta mas avanzada de la informacion en una base de datos vectorial
+# el llm lo que hace es crear varias preguntas simlares a la pregunta original
+
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_openai import ChatOpenAI
