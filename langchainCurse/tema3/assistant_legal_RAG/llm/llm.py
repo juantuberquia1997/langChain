@@ -1,5 +1,6 @@
 from langchain_openai import  ChatOpenAI
 from prompts.rag_prompts import crear_sistema_prompts
+from config.config import QUERY_MODEL, GENERATION_MODEL
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature = 0.1)
 
