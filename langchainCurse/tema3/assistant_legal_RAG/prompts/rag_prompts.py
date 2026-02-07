@@ -1,43 +1,73 @@
-from langchain_core.prompts import  SystemMessagePromptTemplate, ChatPromptTemplate, HumanMessagePromptTemplate
+# from langchain_core.prompts import  SystemMessagePromptTemplate, ChatPromptTemplate, HumanMessagePromptTemplate
+from langchain_core.prompts import PromptTemplate
 
-SISTEMA_PROMPT = SystemMessagePromptTemplate.from_template(
-    """Eres un experto analizador de archivos, con 10 años de experiencia en busqueda inteligente en documentos de relacionados con contratos de arrendamientos. 
-    Tu especialidad es analizar estos documentos minuciosamente, proporcionando un análisis detallado y objetivo.
+# Prompt principal para el sistema RAG
+RAG_TEMPLATE = """Eres un asistente legal especializado en contratos de arrendamiento.
+    Basándote ÚNICAMENTE en los siguientes fragmentos de contratos, responde a la pregunta del usuario.
 
-    CRITERIOS DE EVALUACIÓN:
-    - Coherencia y cohesión en la información
-    - Claridad en la información
-    - Precisións en la información
-    - Consistencia en la información
-    - Relevancia en la información
-    - Cualidad en la información
-    - Eficiencia  en la información     
+    FRAGMENTOS DE CONTRATOS:
+    {context}
 
-    """
+    PREGUNTA: {question}
+
+    INSTRUCCIONES:
+    - Proporciona una respuesta clara y directa basada en la información disponible
+    - Si encuentras la información exacta, cítala textualmente cuando sea relevante
+    - Incluye todos los detalles importantes: nombres, direcciones, importes, fechas
+    - Si la información está incompleta o no está disponible, indícalo claramente
+    - Organiza la información de manera estructurada si es necesaria
+    - Si hay múltiples contratos o personas mencionadas, especifica a cuál te refieres
+
+    RESPUESTA:"""
+
+
+# Prompt personalizado para el MultiQueryRetriever
+MULTI_QUERY_PROMPT = PromptTemplate(
+  input_variables=["question"],
+  template=(
+  """Eres un experto en análisis de documentos legales especializados en contratos de arrendamiento.
+    Tu tarea es generar múltiples versiones de la consulta del usuario para recuperar documentos relevantes desde una base de datos vectorial.
+
+    Al generar variaciones de la consulta, considera:
+    - Diferentes formas de referirse a personas (nombre completo, apellidos, solo nombre)
+    - Sinónimos legales y términos técnicos de arrendamiento
+    - Variaciones en la formulación de preguntas sobre aspectos contractuales
+    - Términos relacionados con ubicaciones, propiedades y condiciones del contrato
+
+    Consulta original: {question}
+
+    Genera exactamente 3 versiones alternativas de esta consulta, una por línea, sin numeración ni viñetas:"""
+ ) 
 )
 
-# Prompt de análisis - Instrucciones específicas para evaluar el CV
-ANALISIS_PROMPT = HumanMessagePromptTemplate.from_template(
-    """Analiza el siguiente contrato de arrendamiento y  responde segun la consulta realizado por el usuario.
-    Proporciona un resumen detallado.
+# Prompt para análisis de relevancia de documentos
+RELEVANCE_PROMPT = """Analiza si el siguiente fragmento de documento es relevante para responder la consulta del usuario.
 
-**Informacion proveia por la consulta a la base de datos vectorial:**
-{respuesta_retriever}
+    FRAGMENTO:
+    {document}
 
-**INSTRUCCIONES ESPECÍFICAS:**
-1. Extrae información clave de los documentos de arrendamientos
-2. Realiza un resument de la infromación extraída
+    CONSULTA: {question}
 
+    ¿Es este fragmento relevante para responder la consulta? Responde solo con "SÍ" o "NO" y una breve justificación."""
 
-Sé preciso, objetivo y constructivo en tu análisis."""
-)
+# Prompt para extracción de entidades clave
+ENTITY_EXTRACTION_PROMPT = """Extrae las entidades clave del siguiente texto de contrato de arrendamiento:
 
-# Prompt completo combinado - Listo para usar
-CHAT_PROMPT = ChatPromptTemplate.from_messages([
-    SISTEMA_PROMPT, 
-    ANALISIS_PROMPT
-])
+    TEXTO:
+    {text}
 
-def crear_sistema_prompts():
-    """Crea el sistema de prompts especializado para análisis de documentos de arrendamientos"""
-    return CHAT_PROMPT
+    Identifica y extrae:
+    - Nombres de personas (arrendador, arrendatario, avalistas)
+    - Direcciones de propiedades
+    - Importes monetarios
+    - Fechas importantes
+    - Duración del contrato
+    - Tipo de propiedad
+
+    Formato de respuesta:
+    PERSONAS: [lista de nombres]
+    DIRECCIONES: [lista de direcciones]
+    IMPORTES: [lista de cantidades]
+    FECHAS: [lista de fechas]
+    DURACIÓN: [periodo del contrato]
+    TIPO: [tipo de propiedad]"""
